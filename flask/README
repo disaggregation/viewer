@@ -28,12 +28,12 @@
 
       5. now you can run minitwit:
 
-         flask run
+		 flask run --host=0.0.0.0
 
          the application will greet you on
-         http://localhost:5000/
+         http://YourIP:5000/
 
     ~ Is it tested?
 
-      You betcha.  Run the `python setup.py test` file to
+      not jet.....  Run the `python setup.py test` file to
       see the tests pass.

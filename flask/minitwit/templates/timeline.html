@@ -9,7 +9,6 @@
   {% endif %}
 {% endblock %}
 {% block body %}
- {% if g.user %}
  
  <canvas class="my-4 chartjs-render-monitor" id="myChart" width="955" height="401" style="display: block; width: 364px; height: 153px;"></canvas>
  <style type="text/css">/* Chart.js */
@@ -88,6 +87,7 @@
 	                 </tbody>
 	               </table>
 	             </div>
+ {% if g.user %}
 	   
  {% else %}
  

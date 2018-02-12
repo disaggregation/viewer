@@ -13,6 +13,10 @@ body {
   color: #5a5a5a;
 }
 
+.page{
+	padding-top:200px;
+}
+
 
 ul.flashes {
     list-style: none;

@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name='Disaggregation',
+    name='minitwit',
     packages=['minitwit'],
     include_package_data=True,
     install_requires=[
