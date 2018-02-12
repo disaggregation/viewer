@@ -43,6 +43,32 @@
          }
        });
      </script>
+	   
+	   
+	   
+	   <canvas class="my-4 chartjs-render-monitor" id="doughnutChart" width="955" height="401" style="display: block; width: 364px; height: 153px;"></canvas>
+	   <script>
+		   //doughnut
+		   var ctxD = document.getElementById("doughnutChart").getContext('2d');
+		   var myLineChart = new Chart(ctxD, {
+		       type: 'doughnut',
+		       data: {
+		           labels: ["Fridge", "Waterboiler", "Iron", "Unknown", "Baseload"],
+		           datasets: [
+		               {
+		                   data: [300, 50, 100, 40, 120],
+		                   backgroundColor: ["#F7464A", "#46BFBD", "#FDB45C", "#949FB1", "#4D5360"],
+		                   hoverBackgroundColor: ["#FF5A5E", "#5AD3D1", "#FFC870", "#A8B3C5", "#616774"]
+		               }
+		           ]
+		       },
+		       options: {
+		           responsive: true
+		       }    
+		   });
+        </script>
+	   
+	   
 	   <div class="table-responsive">
 	               <table class="table table-striped table-sm">
 	                 <thead>
@@ -78,7 +104,7 @@
 	                   </tr>
 	                   <tr>
 	                     <td>7</td>
-	                     <td>Unknow</td>
+	                     <td>Unknown</td>
 	                     <td>400W</td>
 	                     <td>2.7kWh</td>
 	                     <td>8d2h</td>
