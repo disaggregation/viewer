@@ -1,3 +1,3 @@
-graft minitwit/templates
-graft minitwit/static
-include minitwit/schema.sql
+graft disaggregation/templates
+graft disaggregation/static
+include disaggregation/schema.sql

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    MiniTwit Tests
+    disaggregation Tests
     ~~~~~~~~~~~~~~
 
-    Tests the MiniTwit application.
+    Tests the disaggregation application.
 
     :copyright: © 2010 by the Pallets team.
     :license: BSD, see LICENSE for more details.
@@ -12,20 +12,20 @@
 import os
 import tempfile
 import pytest
-from minitwit import minitwit
+from disaggregation import disaggregation
 
 
 @pytest.fixture
 def client():
-    db_fd, minitwit.app.config['DATABASE'] = tempfile.mkstemp()
-    client = minitwit.app.test_client()
-    with minitwit.app.app_context():
-        minitwit.init_db()
+    db_fd, disaggregation.app.config['DATABASE'] = tempfile.mkstemp()
+    client = disaggregation.app.test_client()
+    with disaggregation.app.app_context():
+        disaggregation.init_db()
 
     yield client
 
     os.close(db_fd)
-    os.unlink(minitwit.app.config['DATABASE'])
+    os.unlink(disaggregation.app.config['DATABASE'])
 
 
 def register(client, username, password, password2=None, email=None):

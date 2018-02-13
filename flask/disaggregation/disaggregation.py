@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    MiniTwit
+    disaggregation
     ~~~~~~~~
 
     A microblogging application written with Flask and sqlite3.
@@ -19,7 +19,7 @@ from werkzeug import check_password_hash, generate_password_hash
 
 
 # configuration
-DATABASE = '/tmp/minitwit.db'
+DATABASE = '/tmp/disaggregation.db'
 PER_PAGE = 30
 DEBUG = True
 SECRET_KEY = b'_5#y2L"F4Q8z\n\xec]/'
@@ -27,7 +27,7 @@ SECRET_KEY = b'_5#y2L"F4Q8z\n\xec]/'
 # create our little application :)
 app = Flask('Disaggregation')
 app.config.from_object(__name__)
-app.config.from_envvar('MINITWIT_SETTINGS', silent=True)
+app.config.from_envvar('disaggregation_SETTINGS', silent=True)
 
 
 def get_db():
