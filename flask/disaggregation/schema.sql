@@ -26,6 +26,7 @@ create table devices (
   author_id integer not null,
   name text not null,
   type text not null,
+  confirm_datetime timestamp,
   power integer,
   energy integer,
   first_datetime timestamp,

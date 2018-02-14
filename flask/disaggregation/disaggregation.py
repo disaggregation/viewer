@@ -24,7 +24,7 @@ PER_PAGE = 30
 DEBUG = True
 SECRET_KEY = b'_5#y2L"F4Q8z\n\xec]/'
 
-# create our little application :)
+# create our little application :)d
 app = Flask('Disaggregation')
 app.config.from_object(__name__)
 app.config.from_envvar('disaggregation_SETTINGS', silent=True)
@@ -123,6 +123,13 @@ def public_timeline():
         where message.author_id = user.user_id
         order by message.pub_date desc limit ?''', [PER_PAGE]))
 
+@app.route('/devices')
+def show_devices():
+    """Displays the devices of all users."""
+    return render_template('devices.html', messages=query_db('''
+        select devices.*, user.* from devices, user
+        where devices.author_id = user.user_id
+        order by devices.last_seen_datetime desc limit ?''', [PER_PAGE]))
 
 @app.route('/<username>')
 def user_timeline(username):
@@ -190,6 +197,20 @@ def add_message():
         db.commit()
         flash('Your message was recorded')
     return redirect(url_for('timeline'))
+
+@app.route('/confirm_device', methods=['POST'])
+def confirm_device():
+    """Confirm a new device for the user."""
+    if 'user_id' not in session:
+        abort(401)
+    if request.form['text']:
+        db = get_db()
+        db.execute('''insert into devices (author_id, name, confirm_datetime)
+          values (?, ?, ?)''', (session['user_id'], request.form['text'],
+                                int(time.time())))
+        db.commit()
+        flash('Your devcies was saved.')
+    return redirect(url_for('devices'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
