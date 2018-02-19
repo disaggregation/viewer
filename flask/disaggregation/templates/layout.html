@@ -13,26 +13,40 @@
     <link href="./static/bootstrap-4.0.0-beta.3-dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
- <link href="./static/style.css" rel="stylesheet">
+    <link href="./static/style.css" rel="stylesheet">
+ 
+ 
+	<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> -->
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="./static/bootstrap-4.0.0-beta.3-dist/js/jquery-3.2.1.min.js"></script>
+    <script>window.jQuery || document.write('<script src="./static/bootstrap-4.0.0-beta.3-dist/js/jquery.min.js"><\/script>')</script>
+    <script src="./static/bootstrap-4.0.0-beta.3-dist/js/popper.min.js"></script>
+    <script src="./static/bootstrap-4.0.0-beta.3-dist/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+	  var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+	</script>
 	
   </head>
   <body>
 
     <header>
       <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <a class="navbar-brand" href="#">Home</a>
+        <a class="navbar" href="#"> <img src="./static/images/icon.png" alt="Home" height="40px"></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav mr-auto">
-  {% if g.user %}
   	<li class="nav-item">
     	<a class="nav-link" href="{{ url_for('timeline') }}#live">Live data</a>
 	 </li>
      <li class="nav-item">
-       <a class="nav-link" href="{{ url_for('timeline') }}#disaggregated">Disaggregated</a>
+       <a class="nav-link" href="{{ url_for('timeline') }}#disaggregated">Disaggregated data</a>
      </li>
+
+  {% if g.user %}
      <li class="nav-item">
        <a class="nav-link" href="  {{ url_for('logout') }}">Logout</a>
      </li>
@@ -143,12 +157,6 @@
       </footer>
     </main>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="./static/bootstrap-4.0.0-beta.3-dist/js/jquery-3.2.1.slim.min.js"></script>
-    <script>window.jQuery || document.write('<script src="./static/bootstrap-4.0.0-beta.3-dist/js/jquery-slim.min.js"><\/script>')</script>
-    <script src="./static/bootstrap-4.0.0-beta.3-dist/js/popper.min.js"></script>
-    <script src="./static/bootstrap-4.0.0-beta.3-dist/js/bootstrap.min.js"></script>
+
   </body>
 </html>

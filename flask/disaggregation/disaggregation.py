@@ -1,26 +1,26 @@
 # -*- coding: utf-8 -*-
 """
-    disaggregation
+    disaggregation: showing the data
     ~~~~~~~~
 
-    A microblogging application written with Flask and sqlite3.
+    A micro application written with Flask and sqlite3.
 
-    :copyright: © 2010 by the Pallets team.
-    :license: BSD, see LICENSE for more details.
+    :copyright: © 2010 by the disaggregation team.
+    :license: Open Source, see LICENSE for more details.
 """
 
 import time
 from sqlite3 import dbapi2 as sqlite3
 from hashlib import md5
 from datetime import datetime
-from flask import Flask, request, session, url_for, redirect, \
-     render_template, abort, g, flash, _app_ctx_stack
+from flask import Flask, request, jsonify, session, url_for, redirect, \
+     render_template, abort, g, flash, _app_ctx_stack     
 from werkzeug import check_password_hash, generate_password_hash
 
 
 # configuration
-DATABASE = '/tmp/disaggregation.db'
-PER_PAGE = 30
+DATABASE = '../../../data/disaggregation.db'
+PER_PAGE = 50
 DEBUG = True
 SECRET_KEY = b'_5#y2L"F4Q8z\n\xec]/'
 
@@ -100,12 +100,12 @@ def before_request():
 @app.route('/')
 def timeline():
     """Shows a users timeline or if no user is logged in it will
-    redirect to the public timeline.  This timeline shows the user's
-    messages as well as all the messages of followed users.
+    redirect to the public device list.  This timeline shows the user's
+    device list as well as all the messages of followed users.
     """
     if not g.user:
         return redirect(url_for('public_timeline'))
-    return render_template('timeline.html', messages=query_db('''
+    return render_template('live_data.html', messages=query_db('''
         select message.*, user.* from message, user
         where message.author_id = user.user_id and (
             user.user_id = ? or
@@ -121,7 +121,11 @@ def public_timeline():
     return render_template('timeline.html', messages=query_db('''
         select message.*, user.* from message, user
         where message.author_id = user.user_id
-        order by message.pub_date desc limit ?''', [PER_PAGE]))
+        order by message.pub_date desc limit ?''', [PER_PAGE]),devices=query_db('''
+        select * from devices
+        order by last_datetime desc limit ?''', [PER_PAGE]),loads=query_db('''
+        select * from loadsonly
+        order by datetime asc limit ?''', [1000]))
 
 @app.route('/devices')
 def show_devices():
@@ -130,6 +134,20 @@ def show_devices():
         select devices.*, user.* from devices, user
         where devices.author_id = user.user_id
         order by devices.last_seen_datetime desc limit ?''', [PER_PAGE]))
+
+@app.route('/load_live_data')
+def load_live_data():
+    """load live data from the db"""
+    loadsonly = query_db('''select * from loadsonly order by datetime desc limit 100''')
+    loads = []
+    for load in loadsonly:
+        power = load['demand']
+        loads.append(load['demand']) 
+        # app.logger.debug(load.keys())
+    # app.logger.debug(loadsonly.keys())
+    # return power
+    return jsonify(result=power,data=loads)
+
 
 @app.route('/<username>')
 def user_timeline(username):

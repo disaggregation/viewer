@@ -33,8 +33,8 @@ create table devices (
   last_datetime timestamp
 );
 
-drop table if exists loads;
-create table loads (
+drop table if exists disaggregated_loads;
+create table disaggregated_loads (
   loads_id integer primary key autoincrement,
   device_id integer,
   power integer,

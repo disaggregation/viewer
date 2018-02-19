@@ -35,11 +35,15 @@ disaggregation/static/bootstrap-4.0.0-beta.3-dist/js/bootstrap.js
 disaggregation/static/bootstrap-4.0.0-beta.3-dist/js/bootstrap.js.map
 disaggregation/static/bootstrap-4.0.0-beta.3-dist/js/bootstrap.min.js
 disaggregation/static/bootstrap-4.0.0-beta.3-dist/js/bootstrap.min.js.map
+disaggregation/static/bootstrap-4.0.0-beta.3-dist/js/jquery-3.1.1.min.js
+disaggregation/static/bootstrap-4.0.0-beta.3-dist/js/jquery-3.2.1.min.js
 disaggregation/static/bootstrap-4.0.0-beta.3-dist/js/jquery-3.2.1.slim.min.js
 disaggregation/static/bootstrap-4.0.0-beta.3-dist/js/popper.min.js
 disaggregation/static/images/favicon.ico
 disaggregation/static/images/icon.png
+disaggregation/templates/devices.html
 disaggregation/templates/layout.html
+disaggregation/templates/live_data.html
 disaggregation/templates/login.html
 disaggregation/templates/register.html
 disaggregation/templates/timeline.html
