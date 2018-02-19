@@ -119,15 +119,11 @@ def timeline():
 def public_timeline():
     """Displays the latest messages of all users."""
     return render_template('timeline.html', 
-        messages=query_db('''
-        select message.*, user.* from message, user
-        where message.author_id = user.user_id
-        order by message.pub_date desc limit ?''', [PER_PAGE]),
-        devices=query_db('''select * from devices
-        order by last_datetime desc limit ?''', [PER_PAGE]),
-        device_types=query_db('''select * from device_types'''),
-        loads=query_db('''select * from loadsonly
-        order by datetime asc limit ?''', [1000]))
+        messages=query_db('''select message.*, user.* from message, user
+        where message.author_id = user.user_id order by message.pub_date desc limit ?''', [PER_PAGE]),
+        devices=query_db('''select * from device order by last_datetime desc limit ?''', [PER_PAGE]),
+        device_types=query_db('''select * from device_types limit ?''', [PER_PAGE]),
+        loads=query_db('''select * from loadsonly order by datetime asc limit ?''', [1000]))
 
 @app.route('/devices')
 def show_devices():

@@ -2,7 +2,7 @@
 {% block title %}
   {% if request.endpoint == 'public_timeline' %}
     Found devices
-  {% elif request.endpoint == 'user_timeline' %}
+  {% elif request.endpoint == 'device_timeline' %}
     {{ profile_user.username }}'s confirmed devices
   {% else %}
     My confirmed devices
