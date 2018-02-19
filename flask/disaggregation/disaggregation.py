@@ -118,13 +118,15 @@ def timeline():
 @app.route('/public')
 def public_timeline():
     """Displays the latest messages of all users."""
-    return render_template('timeline.html', messages=query_db('''
+    return render_template('timeline.html', 
+        messages=query_db('''
         select message.*, user.* from message, user
         where message.author_id = user.user_id
-        order by message.pub_date desc limit ?''', [PER_PAGE]),devices=query_db('''
-        select * from devices
-        order by last_datetime desc limit ?''', [PER_PAGE]),loads=query_db('''
-        select * from loadsonly
+        order by message.pub_date desc limit ?''', [PER_PAGE]),
+        devices=query_db('''select * from devices
+        order by last_datetime desc limit ?''', [PER_PAGE]),
+        device_types=query_db('''select * from device_types'''),
+        loads=query_db('''select * from loadsonly
         order by datetime asc limit ?''', [1000]))
 
 @app.route('/devices')
@@ -138,22 +140,22 @@ def show_devices():
 @app.route('/load_live_data')
 def load_live_data():
     """load live data from the db"""
-    loadsonly = query_db('''select * from loadsonly order by datetime desc limit 100''')
+    loadsonly = query_db('''select * from loadsonly order by datetime asc limit 100''')
     loads = []
     for load in loadsonly:
         power = load['demand']
         loads.append(load['demand']) 
-        # app.logger.debug(load.keys())
+
     # app.logger.debug(loadsonly.keys())
     # return power
     return jsonify(result=power,data=loads)
 
 
-@app.route('/<username>')
-def user_timeline(username):
-    """Display's a users tweets."""
-    profile_user = query_db('select * from user where username = ?',
-                            [username], one=True)
+@app.route('/<devicename>')
+def device_timeline(devicename):
+    """Display's a devicename energy consumption and occurance."""
+    profile_user = query_db('select * from devices where name = ?',
+                            [devicename], one=True)
     if profile_user is None:
         abort(404)
     followed = False
@@ -170,36 +172,36 @@ def user_timeline(username):
             profile_user=profile_user)
 
 
-@app.route('/<username>/follow')
-def follow_user(username):
+@app.route('/<devicename>/follow')
+def follow_device(devicename):
     """Adds the current user as follower of the given user."""
     if not g.user:
         abort(401)
-    whom_id = get_user_id(username)
+    whom_id = get_user_id(devicename)
     if whom_id is None:
         abort(404)
     db = get_db()
     db.execute('insert into follower (who_id, whom_id) values (?, ?)',
               [session['user_id'], whom_id])
     db.commit()
-    flash('You are now following "%s"' % username)
-    return redirect(url_for('user_timeline', username=username))
+    flash('You are now following "%s"' % devicename)
+    return redirect(url_for('device_timeline', devicename=devicename))
 
 
-@app.route('/<username>/unfollow')
-def unfollow_user(username):
+@app.route('/<devicename>/unfollow')
+def unfollow_device(devicename):
     """Removes the current user as follower of the given user."""
     if not g.user:
         abort(401)
-    whom_id = get_user_id(username)
+    whom_id = get_user_id(devicename)
     if whom_id is None:
         abort(404)
     db = get_db()
     db.execute('delete from follower where who_id=? and whom_id=?',
               [session['user_id'], whom_id])
     db.commit()
-    flash('You are no longer following "%s"' % username)
-    return redirect(url_for('user_timeline', username=username))
+    flash('You are no longer following "%s"' % devicename)
+    return redirect(url_for('device_timeline', devicename=devicename))
 
 
 @app.route('/add_message', methods=['POST'])

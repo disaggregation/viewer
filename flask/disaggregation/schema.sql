@@ -20,6 +20,25 @@ create table message (
   pub_date integer
 );
 
+drop table if exists device_types;
+create table device_types (
+  device_type_id integer primary key autoincrement,
+  title text not null,
+  name text not null,
+  image_url text);
+INSERT INTO `device_types` VALUES (1,'coffe_machine','Coffe machine','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
+INSERT INTO `device_types` VALUES (2,'computer_desktop','Desktop','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
+INSERT INTO `device_types` VALUES (3,'computer_laptop','Laptop','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
+INSERT INTO `device_types` VALUES (4,'freezer','Laptop','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
+INSERT INTO `device_types` VALUES (5,'Heater','Heater','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
+INSERT INTO `device_types` VALUES (6,'Oven','Oven','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
+INSERT INTO `device_types` VALUES (7,'Router','Router','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
+INSERT INTO `device_types` VALUES (8,'Television','Television','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
+INSERT INTO `device_types` VALUES (9,'washshing_machine','Washshing Machine','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
+INSERT INTO `device_types` VALUES (10,'water_cooker','Water Cooker','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
+
+
+
 drop table if exists devices;
 create table devices (
   device_id integer primary key autoincrement,
