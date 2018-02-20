@@ -1,3 +1,22 @@
+CREATE TABLE loads (date datetime, 
+	lowtarif_demand real, 
+	hightarif_demand real, 
+	lowtarif_supply real, 
+	hightarif_supply real, 
+	demand_power real, 
+	supply_power real, 
+	gas_demand real, 
+	demand_power_L1 real, 
+	demand_power_L2 real, 
+	demand_power_L3 real, 
+	supply_power_L1 real, 
+	supply_power_L2 real, 
+	supply_power_L3 real, 
+	voltage real, 
+	current real);
+	
+CREATE VIEW loadsonly(datetime,demand) AS SELECT date,demand_power FROM loads;
+
 drop table if exists user;
 create table user (
   user_id integer primary key autoincrement,
