@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS loads (date datetime,
 	voltage real, 
 	current real);
 	
-CREATE VIEW IF NOT EXISTS  loadsonly(datetime,demand) AS SELECT date,demand_power FROM loads;
+CREATE VIEW IF NOT EXISTS loadsonly (datetime,demand) AS SELECT date,demand_power FROM loads;
 
 drop table if exists user;
 create table user (
