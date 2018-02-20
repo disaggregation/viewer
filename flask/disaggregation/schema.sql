@@ -1,4 +1,4 @@
-CREATE TABLE loads (date datetime, 
+CREATE TABLE IF NOT EXISTS loads (date datetime, 
 	lowtarif_demand real, 
 	hightarif_demand real, 
 	lowtarif_supply real, 
@@ -15,7 +15,7 @@ CREATE TABLE loads (date datetime,
 	voltage real, 
 	current real);
 	
-CREATE VIEW loadsonly(datetime,demand) AS SELECT date,demand_power FROM loads;
+CREATE VIEW IF NOT EXISTS  loadsonly(datetime,demand) AS SELECT date,demand_power FROM loads;
 
 drop table if exists user;
 create table user (
