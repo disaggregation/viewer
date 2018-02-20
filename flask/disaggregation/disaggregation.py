@@ -24,7 +24,7 @@ PER_PAGE = 50
 DEBUG = True
 SECRET_KEY = b'_5#y2L"F4Q8z\n\xec]/'
 
-# create our little application :)d
+# create our little application :)
 app = Flask('Disaggregation')
 app.config.from_object(__name__)
 app.config.from_envvar('disaggregation_SETTINGS', silent=True)
@@ -291,3 +291,6 @@ def logout():
 # add some filters to jinja
 app.jinja_env.filters['datetimeformat'] = format_datetime
 app.jinja_env.filters['gravatar'] = gravatar_url
+
+if __name__ == '__main__':
+      app.run(debug=True, host='0.0.0.0')
