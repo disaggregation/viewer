@@ -267,7 +267,7 @@
   <h2>loads</h2>
   <ul class="messages">
   {% for load in loads %}
-      <li><strong>{{ load.datetime }}</strong> {{ load.demand }} W
+      <li><strong>{{ load.date }}</strong> {{ load.demand_power }} W
   {% else %}
     <li><em>There's device logged jet...</em>
   {% endfor %}
