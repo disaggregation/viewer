@@ -136,15 +136,22 @@ def show_devices():
 @app.route('/load_live_data')
 def load_live_data():
     """load live data from the db"""
-    loadsonly = query_db('''select * from loads order by date asc limit 100''')
+    loadsonly = query_db('''select * from loads order by date desc limit 1000''')
     loads = []
+    production = []
     for load in loadsonly:
-        power = load['demand_power']
-        loads.append(load['demand_power']) 
-
+	try:
+        	power = load['demand_power_L1']+load['demand_power_L2']+load['demand_power_L3']
+        	loads.append(load['demand_power_L1']+load['demand_power_L2']+load['demand_power_L3'])
+		production.append(load['supply_power_L1']+load['supply_power_L2']+load['supply_power_L3'])
+	except:
+		power = load['demand_power']
+                loads.append(load['demand_power'])
+		production.append(load['supply_power'])
+    power = loads[0]
     # app.logger.debug(loadsonly.keys())
     # return power
-    return jsonify(result=power,data=loads)
+    return jsonify(result=power,data=list(reversed(loads)),production=production)
 
 
 @app.route('/<devicename>')
