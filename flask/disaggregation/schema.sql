@@ -45,18 +45,23 @@ create table device_types (
   title text not null,
   name text not null,
   image_url text);
-INSERT INTO `device_types` VALUES (1,'coffe_machine','Coffe machine','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
+INSERT INTO `device_types` VALUES (1,'coffe_machine','Coffe machine','https://portal.plugwise.net/3/img/devices/coffee_maker.png');
 INSERT INTO `device_types` VALUES (2,'computer_desktop','Desktop','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
 INSERT INTO `device_types` VALUES (3,'computer_laptop','Laptop','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
-INSERT INTO `device_types` VALUES (4,'freezer','Laptop','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
-INSERT INTO `device_types` VALUES (5,'Heater','Heater','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
+INSERT INTO `device_types` VALUES (4,'freezer','Freezer','https://portal.plugwise.net/3/img/devices/freezer.png');
+INSERT INTO `device_types` VALUES (5,'Heater','Heater','');
 INSERT INTO `device_types` VALUES (6,'Oven','Oven','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
 INSERT INTO `device_types` VALUES (7,'Router','Router','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
-INSERT INTO `device_types` VALUES (8,'Television','Television','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
-INSERT INTO `device_types` VALUES (9,'washshing_machine','Washshing Machine','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
-INSERT INTO `device_types` VALUES (10,'water_cooker','Water Cooker','https://portal.plugwise.net/3/img/devices/computer_desktop.png');
-
-
+INSERT INTO `device_types` VALUES (8,'Television','Television','https://portal.plugwise.net/3/img/devices/tv.png');
+INSERT INTO `device_types` VALUES (9,'washshing_machine','Washshing Machine','https://portal.plugwise.net/3/img/devices/washingmachine.png');
+INSERT INTO `device_types` VALUES (10,'water_cooker','Water Cooker','https://portal.plugwise.net/3/img/devices/watercooker.png');
+-- https://portal.plugwise.net/3/img/devices/water_bed.png
+-- https://portal.plugwise.net/3/img/devices/oven_microwave.png
+-- https://portal.plugwise.net/3/img/devices/heater_central.png	
+-- https://portal.plugwise.net/3/img/devices/hometheater.png
+-- https://portal.plugwise.net/3/img/devices/pump_heater.png
+-- https://portal.plugwise.net/3/img/devices/vcr.png
+-- https://portal.plugwise.net/3/img/devices/dryer.png
 
 drop table if exists devices;
 create table devices (
