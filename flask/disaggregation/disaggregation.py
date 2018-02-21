@@ -140,14 +140,14 @@ def load_live_data():
     loads = []
     production = []
     for load in loadsonly:
-	try:
-        	power = load['demand_power_L1']+load['demand_power_L2']+load['demand_power_L3']
-        	loads.append(load['demand_power_L1']+load['demand_power_L2']+load['demand_power_L3'])
-		production.append(load['supply_power_L1']+load['supply_power_L2']+load['supply_power_L3'])
-	except:
-		power = load['demand_power']
-                loads.append(load['demand_power'])
-		production.append(load['supply_power'])
+    try:
+        power = load['demand_power_L1']+load['demand_power_L2']+load['demand_power_L3']
+        loads.append(load['demand_power_L1']+load['demand_power_L2']+load['demand_power_L3'])
+        production.append(load['supply_power_L1']+load['supply_power_L2']+load['supply_power_L3'])
+    except:
+        power = load['demand_power']
+        loads.append(load['demand_power'])
+        production.append(load['supply_power'])
     power = loads[0]
     # app.logger.debug(loadsonly.keys())
     # return power
