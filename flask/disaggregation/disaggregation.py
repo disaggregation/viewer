@@ -139,19 +139,21 @@ def load_live_data():
     loadsonly = query_db('''select * from loads order by date desc limit 1000''')
     loads = []
     production = []
+    timestamps = []
     for load in loadsonly:
-    try:
-        power = load['demand_power_L1']+load['demand_power_L2']+load['demand_power_L3']
-        loads.append(load['demand_power_L1']+load['demand_power_L2']+load['demand_power_L3'])
-        production.append(load['supply_power_L1']+load['supply_power_L2']+load['supply_power_L3'])
-    except:
-        power = load['demand_power']
-        loads.append(load['demand_power'])
-        production.append(load['supply_power'])
+        timestamps.append(load['date'])
+        try:
+            power = load['demand_power_L1']+load['demand_power_L2']+load['demand_power_L3']
+            loads.append(load['demand_power_L1']+load['demand_power_L2']+load['demand_power_L3'])
+            production.append(load['supply_power_L1']+load['supply_power_L2']+load['supply_power_L3'])
+        except:
+            power = load['demand_power']
+            loads.append(load['demand_power'])
+            production.append(load['supply_power'])
     power = loads[0]
     # app.logger.debug(loadsonly.keys())
     # return power
-    return jsonify(result=power,data=list(reversed(loads)),production=production)
+    return jsonify(result=power,timestamps=list(reversed(timestamps)),data=list(reversed(loads)),production=list(reversed(production)))
 
 
 @app.route('/<devicename>')

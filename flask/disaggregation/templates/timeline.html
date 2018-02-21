@@ -93,22 +93,37 @@
          type: 'line',
          data: {
            labels: [{% for load in loads %}
-				 "{{ load.datetime }}",
+				 "{{ load.date }}",
   {% else %}
     1,2,3,4,5,4,3,2,1,
   {% endfor %}"now?"],
            datasets: [{
-             data: [{% for load in loads %}
-				 {{ load.demand }},
-  {% else %}
-    1,2,3,4,5,4,3,2,1,
-  {% endfor %}0],
-             lineTension: 0,
-             backgroundColor: 'transparent',
-             borderColor: '#007bff',
-             borderWidth: 4,
-  pointBackgroundColor: '#007bff',name:"title"
-           }]
+               label: "Usage",
+               data: [{% for load in loads %}
+  				 {{ load.demand_power }},
+    {% else %}
+      1,2,3,4,5,4,3,2,1,
+    {% endfor %}0],
+               lineTension: 0,
+               steppedLine: 'before',
+               backgroundColor: 'transparent',
+               borderColor: '#007bff',
+               borderWidth: 4,
+    pointBackgroundColor: '#007bff',name:"title"
+             },{
+	             label: "Production",
+	             data: [{% for load in loads %}
+					 {{ load.demand_power }},
+	  {% else %}
+	    1,2,3,4,5,4,3,2,1,
+	  {% endfor %}0],
+	             lineTension: 0,
+	             steppedLine: 'before',
+	             backgroundColor: 'transparent',
+	             borderColor: '#ff7bff',
+	             borderWidth: 4,
+		  		pointBackgroundColor: '#ff7bff'
+             }]
          },
          options: {
            scales: {
@@ -141,7 +156,9 @@
 			
 			myChart.data.datasets.forEach(function(dataset) {
 				dataset.data = data.data;
+				dataset.labels = data.timestamps;
 			});
+			myChart.data.datasets[1].data = data.production;
 			myChart.update();
 	      });
 	      return false;
