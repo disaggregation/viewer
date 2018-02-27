@@ -123,7 +123,7 @@ def public_timeline():
         where message.author_id = user.user_id order by message.pub_date desc limit ?''', [PER_PAGE]),
         devices=query_db('''select * from devices order by last_datetime desc limit ?''', [PER_PAGE]),
         device_types=query_db('''select * from device_types limit ?''', [PER_PAGE]),
-        loads=query_db('''select * from loads order by date desc limit ?''', [1000]))
+        loads=reversed(query_db('''select * from loads order by date desc limit ?''', [1000])))
 
 @app.route('/devices')
 def show_devices():
