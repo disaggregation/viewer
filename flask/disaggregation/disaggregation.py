@@ -123,7 +123,7 @@ def public_timeline():
         where message.author_id = user.user_id order by message.pub_date desc limit ?''', [PER_PAGE]),
         devices=query_db('''select * from devices order by last_datetime desc limit ?''', [PER_PAGE]),
         device_types=query_db('''select * from device_types limit ?''', [PER_PAGE]),
-        loads=query_db('''select * from loads order by date asc limit ?''', [1000]))
+        loads=query_db('''select * from loads order by date desc limit ?''', [1000]))
 
 @app.route('/devices')
 def show_devices():
@@ -136,15 +136,24 @@ def show_devices():
 @app.route('/load_live_data')
 def load_live_data():
     """load live data from the db"""
-    loadsonly = query_db('''select * from loads order by date asc limit 100''')
+    loadsonly = query_db('''select * from loads order by date desc limit 1000''')
     loads = []
+    production = []
+    timestamps = []
     for load in loadsonly:
-        power = load['demand_power']
-        loads.append(load['demand_power']) 
-
+        timestamps.append(load['date'])
+        try:
+            power = load['demand_power_L1']+load['demand_power_L2']+load['demand_power_L3']
+            loads.append(load['demand_power_L1']+load['demand_power_L2']+load['demand_power_L3'])
+            production.append(load['supply_power_L1']+load['supply_power_L2']+load['supply_power_L3'])
+        except:
+            power = load['demand_power']
+            loads.append(load['demand_power'])
+            production.append(load['supply_power'])
+    power = loads[0]
     # app.logger.debug(loadsonly.keys())
     # return power
-    return jsonify(result=power,data=loads)
+    return jsonify(result=power,timestamps=list(reversed(timestamps)),data=list(reversed(loads)),production=list(reversed(production)))
 
 
 @app.route('/<devicename>')

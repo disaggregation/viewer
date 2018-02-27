@@ -83,7 +83,7 @@
   	  });
   	</script>
  
- <canvas class="my-4 chartjs-render-monitor" id="myChart" width="955" height="401" style="display: block; width: 364px; height: 100px;"></canvas>
+ <canvas class="my-4 chartjs-render-monitor" id="myChart" width="100%" height="81" style="display: block; width: 364px; height: 100px;"></canvas>
  <style type="text/css">/* Chart.js */
  @-webkit-keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}@keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}.chartjs-render-monitor{-webkit-animation:chartjs-render-animation 0.001s;animation:chartjs-render-animation 0.001s;}</style>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
@@ -93,22 +93,37 @@
          type: 'line',
          data: {
            labels: [{% for load in loads %}
-				 "{{ load.datetime }}",
+				 "{{ load.date }}",
   {% else %}
     1,2,3,4,5,4,3,2,1,
   {% endfor %}"now?"],
            datasets: [{
-             data: [{% for load in loads %}
-				 {{ load.demand }},
-  {% else %}
-    1,2,3,4,5,4,3,2,1,
-  {% endfor %}0],
-             lineTension: 0,
-             backgroundColor: 'transparent',
-             borderColor: '#007bff',
-             borderWidth: 4,
-  pointBackgroundColor: '#007bff',name:"title"
-           }]
+               label: "Usage",
+               data: [{% for load in loads %}
+  				 {{ load.demand_power }},
+    {% else %}
+      1,2,3,4,5,4,3,2,1,
+    {% endfor %}0],
+               lineTension: 0,
+               steppedLine: 'before',
+               backgroundColor: 'transparent',
+               borderColor: '#007bff',
+               borderWidth: 4,
+    pointBackgroundColor: '#007bff',name:"title"
+             },{
+	             label: "Production",
+	             data: [{% for load in loads %}
+					 {{ load.demand_power }},
+	  {% else %}
+	    1,2,3,4,5,4,3,2,1,
+	  {% endfor %}0],
+	             lineTension: 0,
+	             steppedLine: 'before',
+	             backgroundColor: 'transparent',
+	             borderColor: '#ff7bff',
+	             borderWidth: 4,
+		  		pointBackgroundColor: '#ff7bff'
+             }]
          },
          options: {
            scales: {
@@ -141,7 +156,9 @@
 			
 			myChart.data.datasets.forEach(function(dataset) {
 				dataset.data = data.data;
+				dataset.labels = data.timestamps;
 			});
+			myChart.data.datasets[1].data = data.production;
 			myChart.update();
 	      });
 	      return false;
@@ -230,7 +247,8 @@
                     <th>Name</th>
                     <th>Power</th>
                     <th>Energy</th>
-                    <th>Last</th>
+                    <th>Start</th>
+                    <th>Stop</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -240,6 +258,7 @@
     <td>{{ device.name }}</td>
     <td>{{ device.power }} W</td>
     <td>{{ device.energy }}kWh</td>
+    <td>{{ device.first_datetime }}</td>
     <td>{{ device.last_datetime }}</td>
   </tr>
       <!-- <li><strong>{{ device.name }}</strong> {{ device.type }} - {{ device.last_datetime }} -->
