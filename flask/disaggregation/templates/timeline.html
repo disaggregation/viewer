@@ -83,7 +83,7 @@
   	  });
   	</script>
  
- <canvas class="my-4 chartjs-render-monitor" id="myChart" width="955" height="401" style="display: block; width: 364px; height: 100px;"></canvas>
+ <canvas class="my-4 chartjs-render-monitor" id="myChart" width="100%" height="81" style="display: block; width: 364px; height: 100px;"></canvas>
  <style type="text/css">/* Chart.js */
  @-webkit-keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}@keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}.chartjs-render-monitor{-webkit-animation:chartjs-render-animation 0.001s;animation:chartjs-render-animation 0.001s;}</style>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
@@ -247,7 +247,8 @@
                     <th>Name</th>
                     <th>Power</th>
                     <th>Energy</th>
-                    <th>Last</th>
+                    <th>Start</th>
+                    <th>Stop</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -257,6 +258,7 @@
     <td>{{ device.name }}</td>
     <td>{{ device.power }} W</td>
     <td>{{ device.energy }}kWh</td>
+    <td>{{ device.first_datetime }}</td>
     <td>{{ device.last_datetime }}</td>
   </tr>
       <!-- <li><strong>{{ device.name }}</strong> {{ device.type }} - {{ device.last_datetime }} -->

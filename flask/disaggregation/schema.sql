@@ -6,12 +6,14 @@ create table user (
   pw_hash text not null
 );
 
+-- NOT USED: follower can be changed to people following devices (alerting or something like that).
 drop table if exists follower;
 create table follower (
   who_id integer,
   whom_id integer
 );
 
+-- NOT USED:  messages can used for system messages, alert the user of specific events.
 drop table if exists message;
 create table message (
   message_id integer primary key autoincrement,
@@ -20,6 +22,7 @@ create table message (
   pub_date integer
 );
 
+-- what know devices can be suggested to the user
 drop table if exists device_types;
 create table device_types (
   device_type_id integer primary key autoincrement,
@@ -44,27 +47,31 @@ INSERT INTO `device_types` VALUES (10,'water_cooker','Water Cooker','https://por
 -- https://portal.plugwise.net/3/img/devices/vcr.png
 -- https://portal.plugwise.net/3/img/devices/dryer.png
 
+
+-- found and registered devices (loads) which can be confirmed by the user.
 drop table if exists devices;
 create table devices (
   device_id integer primary key autoincrement,
-  author_id integer not null,
   name text not null,
-  type text not null,
-  confirm_datetime timestamp,
+  type text,
   power integer,
   energy integer,
   first_datetime timestamp,
-  last_datetime timestamp
+  last_datetime timestamp,
+  author_id integer, -- confirm_author_id?
+  confirm_datetime timestamp
 );
 
+-- log of disaggregation loads (used)
 drop table if exists disaggregated_loads;
 create table disaggregated_loads (
   loads_id integer primary key autoincrement,
   device_id integer,
   power integer,
   energy integer,
-  first_seen_datetime timestamp,
-  last_seen_datetime timestamp
+  start_datetime timestamp,
+  end_datetime timestamp,
+  profile text
 );
 
 
