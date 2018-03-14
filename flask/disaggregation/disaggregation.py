@@ -22,9 +22,10 @@ try:
     import socket
     import requests
     r=requests.get('https://beacon.makethemetersmarter.com?ip='+socket.gethostbyname(socket.gethostname()))
+    print("Beacon updated https://beacon.makethemetersmarter.com?ip="+socket.gethostbyname(socket.gethostname())
 except:
     print("beacon not activated")
-    
+
 # configuration
 DATABASE = '../../../data/disaggregation.db'
 PER_PAGE = 50
