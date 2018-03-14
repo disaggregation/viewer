@@ -22,13 +22,14 @@ try:
     import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
-    print(s.getsockname()[0])
+    ip = s.getsockname()[0]
     s.close()
+    
     import requests
-    r=requests.get('https://beacon.makethemetersmarter.com?ip='+s.getsockname()[0])
-    print("Beacon updated https://beacon.makethemetersmarter.com?ip="+s.getsockname()[0])
+    r=requests.get('https://beacon.makethemetersmarter.com?ip='+ip)
+    print("Beacon updated https://beacon.makethemetersmarter.com?ip="+ip)
 except:
-    print("beacon not activated")
+    print("Beacon not updated")
 
 # configuration
 DATABASE = '../../../data/disaggregation.db'
