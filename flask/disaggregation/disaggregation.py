@@ -20,9 +20,13 @@ from werkzeug import check_password_hash, generate_password_hash
 # on activation of the webserver, check for internet and send the local ip to the server for easy redirect on your phone.
 try:
     import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    print(s.getsockname()[0])
+    s.close()
     import requests
-    r=requests.get('https://beacon.makethemetersmarter.com?ip='+socket.gethostbyname(socket.gethostname()))
-    print("Beacon updated https://beacon.makethemetersmarter.com?ip="+socket.gethostbyname(socket.gethostname()))
+    r=requests.get('https://beacon.makethemetersmarter.com?ip='+s.getsockname()[0])
+    print("Beacon updated https://beacon.makethemetersmarter.com?ip="+s.getsockname()[0])
 except:
     print("beacon not activated")
 
