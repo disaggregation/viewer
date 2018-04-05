@@ -134,7 +134,10 @@ def public_timeline():
     return render_template('timeline.html', 
         messages=query_db('''select message.*, user.* from message, user
         where message.author_id = user.user_id order by message.pub_date desc limit ?''', [PER_PAGE]),
-        devices=query_db('''select * from devices order by last_datetime desc limit ?''', [PER_PAGE]),
+        devices=query_db('''select *,count(*) as 'num',avg(power),
+sum((strftime(\'%s\', first_datetime)-strftime(\'%s\', last_datetime))) as 'seconds',
+round(sum((strftime(\'%s\', first_datetime)-strftime(\'%s\', last_datetime)))/3600*power/1000,2)  as 'kWh',
+first_datetime,last_datetime from devices group by name order by last_datetime limit ?''', [PER_PAGE]),
         device_types=query_db('''select * from device_types limit ?''', [PER_PAGE]),
         loads=reversed(query_db('''select * from loads order by date desc limit ?''', [1000])))
 
@@ -188,20 +191,19 @@ def device_timeline(devicename):
             profile_user=profile_user)
 
 
-@app.route('/<devicename>/follow')
+@app.route('/<deviceid>/change', methods=['POST'])
 def follow_device(devicename):
-    """Adds the current user as follower of the given user."""
-    if not g.user:
-        abort(401)
-    whom_id = get_user_id(devicename)
-    if whom_id is None:
-        abort(404)
+    """change the device name and add typ."""
+    # if not g.user:
+    #     abort(401)
+    # whom_id = get_user_id(devicename)
+    # if whom_id is None:
+    #     abort(404)
     db = get_db()
-    db.execute('insert into follower (who_id, whom_id) values (?, ?)',
-              [session['user_id'], whom_id])
+    db.execute('UPDATE devices SET name = \'?\' and type = ? WHERE id = ?',(request.form['name'],request.form['devicetype'],deviceid))
     db.commit()
-    flash('You are now following "%s"' % devicename)
-    return redirect(url_for('device_timeline', devicename=devicename))
+    flash('Device name updated to "%s"' % devicename)
+    return redirect(url_for('timeline', devicename=devicename))
 
 
 @app.route('/<devicename>/unfollow')

@@ -243,21 +243,43 @@
               <table class="table table-striped table-sm">
                 <thead>
                   <tr>
-                    <th>Occurence</th>
                     <th>Name</th>
-                    <th>Power</th>
+                    <th>Type</th>
+                    <th>Confirm</th>
+                    <th>Avg Power</th>
                     <th>Energy</th>
-                    <th>Start</th>
-                    <th>Stop</th>
+                	<th># Occurence</th>
+                    <th>First (on)</th>
+                    <th>Last (off)</th>
                   </tr>
                 </thead>
                 <tbody>
   {% for device in devices %}
   <tr>
-    <td>{{ device.count }} -</td>
-    <td>{{ device.name }}</td>
+	<form action="/{{ device.name }}/change" method="post">
+    <td>
+		<input type="text" name="id" value="{{ device.device_id }}" style="display:none;">
+		<input type="text" name="name" value="{{ device.name }}"></td>
+    <td>
+		<select name="device_type">
+      		<option value="unknown">Unknown</option>
+  {% for device in device_types %}
+      		<option value="{{ device.title }}">{{ device.name }}</option>
+  {% else %}
+      		<option value="new">New</option>
+  {% endfor %}
+		</select>
+	  	<!-- <input type="submit" value="Update"> -->
+	</form>
+    </td>
+    
+    <td>
+		<img src="./static/images/cancel.jpeg" width="20" height="20" alt="Cancel">
+		<img src="../static/images/confirm.jpeg" width="20" height="20" alt="Confirm">
+	</td>
     <td>{{ device.power }} W</td>
-    <td>{{ device.energy }}kWh</td>
+    <td>{{ device.kWh }} kWh</td>
+    <td>{{ device.num }} cycles</td>
     <td>{{ device.first_datetime }}</td>
     <td>{{ device.last_datetime }}</td>
   </tr>
