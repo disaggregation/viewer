@@ -10,13 +10,14 @@
 {% endblock %}
 {% block body %}
 
-<h1>Live data:   <span id="result">?</span> W</h1>
+<h1>Live data<br>Usage: <span id="usage">?</span> W <br>Production <span id="production">?</span> W</h1>
 <!-- <a href=# id="calculate">load last data</a> -->
 	<script type="text/javascript">
 	  $(function() {
 	    var submit_form = function(e) {
 	      $.getJSON($SCRIPT_ROOT + '/load_live_data', {request:'power'}, function(data) {
-	        $('#result').text(data.result);
+	        $('#usage').text(data.result);
+			$('#production').text(data.result);
 	      });
 	      return false;
 	    };

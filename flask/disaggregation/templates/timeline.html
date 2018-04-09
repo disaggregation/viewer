@@ -28,9 +28,9 @@
             <img class="first-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="First slide">
             <div class="container">
               <div class="carousel-caption text-left">
-                <h1>Live Data Disaggregation.</h1>
-                <p>The app was specifically build to show your live disaggregated data.</p>
-                <p><a class="btn btn-lg btn-primary" href="#live" role="button">Look</a></p>
+                <h1>Live Disaggregated Data</h1>
+                <p>The webapp was specifically build to show your disaggregated data energy. The first thing you see below is the disaggregated data grouped per device (power levels) in kWh. The</p>
+                <p><a class="btn btn-lg btn-primary" href="#disaggregated" role="button">Disaggregated data</a> <a class="btn btn-lg btn-primary" href="#live" role="button">Live data</a></p>
               </div>
             </div>
           </div>
@@ -39,7 +39,7 @@
             <div class="container">
               <div class="carousel-caption">
                 <h1>Confirm and analyse found devices.</h1>
-                <p>Confirm new found devices to you list of know devices and monitor their energy consumption.</p>
+                <p>Confirm new devices in the list of found devices and monitor their energy consumption.</p>
                 <p><a class="btn btn-lg btn-primary" href="#devices" role="button">Learn more</a></p>
               </div>
             </div>
@@ -49,7 +49,7 @@
             <div class="container">
               <div class="carousel-caption text-right">
                 <h1>Share your knowledge</h1>
-                <p>Add your own device types to the list of known devices.</p>
+                <p>Add any device types which are not in the list of known devices.</p>
                 <p><a class="btn btn-lg btn-primary" href="https://www.github.com/disaggregation/viewer" role="button">Share</a></p>
               </div>
             </div>
@@ -66,27 +66,61 @@
       </div>
 	 <link href="./static/dashboard.css" rel="stylesheet">
  {% endif %}
- 
-  <h1>Live data:   <span id="result">?</span> W</h1>
-  <!-- <a href=# id="calculate">load last data</a> -->
-  	<script type="text/javascript">
-  	  $(function() {
-  	    var submit_form = function(e) {
-  	      $.getJSON($SCRIPT_ROOT + '/load_live_data', {request:'power'}, function(data) {
-  	        $('#result').text(data.result);
-  	      });
-  	      return false;
-  	    };
-  		setInterval(submit_form, 1000);
-  	    // $('a#calculate').bind('click', submit_form);
 
-  	  });
-  	</script>
- 
+<h1 id="disaggregated">Disaggregated data</h1>
+<canvas class="my-4 chartjs-render-monitor" id="doughnutChart" width="955" height="401" style="display: block; width: 364px; height: 153px;"></canvas>
+<h3>Period; start: <span id="start">?</span>,stop: <span id="stop">?</span></h3>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+<script>
+  //doughnut
+  var ctxD = document.getElementById("doughnutChart").getContext('2d');
+  var mydoughnutChart = new Chart(ctxD, {
+      type: 'doughnut',
+      data: {
+          labels: [{% for device in devices %}"{{ device.name }}",{% endfor %}"extra"],
+          datasets: [
+              {
+                  data: [{% for device in devices %}{{ device.kWh }},{% endfor %}0]
+                  ,backgroundColor: ["#ff0000","#ff4000","#ff8000","#ffbf00","#ffff00","#bfff00","#80ff00","#40ff00","#00ff00","#00ff40","#00ff80","#00ffbf","#00ffff","#00bfff","#0080ff","#0040ff","#0000ff","#4000ff","#8000ff","#bf00ff","#ff00ff","#ff00bf","#ff0080","#ff0040"]
+				   ,hoverBackgroundColor: ["#ff0000","#ff4000","#ff8000","#ffbf00","#ffff00","#bfff00","#80ff00","#40ff00","#00ff00","#00ff40","#00ff80","#00ffbf","#00ffff","#00bfff","#0080ff","#0040ff","#0000ff","#4000ff","#8000ff","#bf00ff","#ff00ff","#ff00bf","#ff0080","#ff0040"]
+              }
+          ]
+      },
+      options: {
+          responsive: true
+      }    
+  });
+</script>
+  <script type="text/javascript">
+    $(function() {
+      var load_disaggregated_data = function(e) {
+  	// load the new data
+        $.getJSON($SCRIPT_ROOT + '/load_disaggregated_data', {}, function(data) {
+			
+  	//update from and to text fields
+  			$('#start').text(data.start); //new would be: data.data[data.data.length-1]
+  			$('#stop').text(data.stop);
+
+  	//update the graph
+  		mydoughnutChart.data.datasets.forEach(function(dataset) {
+  			dataset.data = data.kWh;
+  		});
+  		mydoughnutChart.data.labels = data.names; //does this work?
+		
+  		mydoughnutChart.update();
+        });
+        return false;
+      };
+	  load_disaggregated_data();  	
+	  setInterval(load_disaggregated_data, 10000);
+
+    });
+</script>
+
+<h1 id="live">Live data<br>Usage: <span id="usage">?</span> W  </h1><h3>Production: <span id="production">?</span> W</h3>	
  <canvas class="my-4 chartjs-render-monitor" id="myChart" width="100%" height="50" style="display: block; width: 364px; height: 100px;"></canvas>
  <style type="text/css">/* Chart.js */
  @-webkit-keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}@keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}.chartjs-render-monitor{-webkit-animation:chartjs-render-animation 0.001s;animation:chartjs-render-animation 0.001s;}</style>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
  <script>
        var ctx = document.getElementById("myChart");
        var myChart = new Chart(ctx, {
@@ -148,57 +182,48 @@
 	}
 	
 	
-     </script>
-	<script type="text/javascript">
-	  $(function() {
-	    var submit_form = function(e) {
-	      $.getJSON($SCRIPT_ROOT + '/load_live_data', {request:'power'}, function(data) {
+</script>
+	
+<script type="text/javascript">
+  $(function() {
+    var submit_form = function(e) {
+      $.getJSON($SCRIPT_ROOT + '/load_live_data', {request:'power'}, function(data) {
+      });
+      return false;
+    };
+	setInterval(submit_form, 1000);
+    // $('a#calculate').bind('click', submit_form);
+
+  });
+  $(function() {
+    var load_live_data = function(e) {
+	// load the new data
+      $.getJSON($SCRIPT_ROOT + '/load_live_data', {request:'power'}, function(data) {
 			
-			myChart.data.datasets.forEach(function(dataset) {
-				dataset.data = data.data;
-				dataset.labels = data.timestamps;
-			});
-			myChart.data.datasets[1].data = data.production;
-			myChart.update();
-	      });
-	      return false;
-	    };
-		// setInterval(randomize, 5000);
+	//update live text fields
+			$('#usage').text(data.result); //new would be: data.data[data.data.length-1]
+			$('#production').text(data.production[data.production.length-1]);
 
+	//update the graph
+		myChart.data.datasets.forEach(function(dataset) {
+			dataset.data = data.data;
+		});
+		myChart.data.datasets[1].data = data.production;
+		myChart.data.labels = data.timestamps; //does this work?
 		
-		setInterval(submit_form, 1000);
-	    // $('a#calculate').bind('click', submit_form);
+		myChart.update();
+      });
+      return false;
+    };
+	// setInterval(randomize, 5000);
 
-	  });
-	</script>
-	   
-	   
-	   
-	   <canvas class="my-4 chartjs-render-monitor" id="doughnutChart" width="955" height="401" style="display: block; width: 364px; height: 153px;"></canvas>
-	   <script>
-	      //doughnut
-	      var ctxD = document.getElementById("doughnutChart").getContext('2d');
-	      var myLineChart = new Chart(ctxD, {
-	          type: 'doughnut',
-	          data: {
-	              labels: ["Baseload","Unknown",  "Waterboiler", "Iron", "Fridge"],
-	              datasets: [
-	                  {
-	                      data: [300, 50, 100, 40, 120],
-	                      backgroundColor: ["#F7464A", "#46BFBD", "#FDB45C", "#949FB1", "#4D5360"],
-	                      hoverBackgroundColor: ["#FF5A5E", "#5AD3D1", "#FFC870", "#A8B3C5", "#616774"]
-	                  }
-	              ]
-	          },
-	          options: {
-	              responsive: true
-	          }    
-	      });
-	   </script>
+	setInterval(load_live_data, 1000);
 
+  });
+</script>
 
-  <h2>timeline</h2>
   {% if g.user %}
+  <h2>timeline</h2>
     {% if request.endpoint == 'device_timeline' %}
       <div class="followstatus">
       {% if g.user.user_id == profile_user.user_id %}
@@ -224,21 +249,10 @@
     {% endif %}
   {% endif %}
 
-<h2>Messages</h2>
+
   
-  <ul class="messages">
-  {% for message in messages %}
-    <li>
-      <strong><a href="{{ url_for('device_timeline', devicename=message.username)
-      }}">{{ message.username }}</a></strong>
-      {{ message.text }}
-      <small>&mdash; {{ message.pub_date|datetimeformat }}</small>
-  {% else %}
-    <li><em>There's device logged jet...</em>
-  {% endfor %}
-  </ul>
-  
-  <h2>Device list</h2>
+  <h2>Found devices list</h2>
+  The list below shows all the devices that where found by the disaggregation code. The are grouped per power level, meanse each device with 1000W is grouped and named '1000_'. You can rename the device. If you think the device is correctly disaggregated, you can select a type and confirm it's presense.<br>
   <div class="table-responsive">
               <table class="table table-striped table-sm">
                 <thead>
@@ -256,9 +270,9 @@
                 <tbody>
   {% for device in devices %}
   <tr>
-	<form action="/{{ device.name }}/change" method="post">
+	<form action="/change/{{ device.name }}" method="post">
     <td>
-		<input type="text" name="id" value="{{ device.device_id }}" style="display:none;">
+		<!-- <input type="text" name="id" value="{{ device.device_id }}" style="display:none;"> -->
 		<input type="text" name="name" value="{{ device.name }}"></td>
     <td>
 		<select name="device_type">
@@ -293,7 +307,7 @@
     </table>
   </div>
   
-  <h2>Known devices list</h2>
+  <h2>Known device types list</h2>
   <ul class="messages">
   {% for device in device_types %}
       <li><strong>{{ device.name }}</strong> {{ device.type }} - {{ device.last_datetime }}
@@ -302,7 +316,20 @@
   {% endfor %}
   </ul>
   
-
+{% if g.user %}
+<h2>Messages</h2>
+  
+  <ul class="messages">
+  {% for message in messages %}
+    <li>
+      <strong><a href="{{ url_for('device_timeline', devicename=message.username)
+      }}">{{ message.username }}</a></strong>
+      {{ message.text }}
+      <small>&mdash; {{ message.pub_date|datetimeformat }}</small>
+  {% else %}
+    <li><em>There's device logged jet...</em>
+  {% endfor %}
+  </ul>
   
   
   <h2>loads</h2>
@@ -313,4 +340,6 @@
     <li><em>There's device logged jet...</em>
   {% endfor %}
   </ul>
+{% endif %}
+  
 {% endblock %}

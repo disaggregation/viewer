@@ -33,7 +33,7 @@ except:
 
 # configuration
 DATABASE = '../../../data/disaggregation.db'
-PER_PAGE = 50
+PER_PAGE = 100
 DEBUG = True
 SECRET_KEY = b'_5#y2L"F4Q8z\n\xec]/'
 
@@ -169,6 +169,28 @@ def load_live_data():
     # return power
     return jsonify(result=power,timestamps=list(reversed(timestamps)),data=list(reversed(loads)),production=list(reversed(production)))
 
+@app.route('/load_disaggregated_data')
+def load_disaggregated_data():
+    """load disaggregated data from the db"""
+    devices=query_db('''select *,count(*) as 'num',avg(power),
+    sum((strftime(\'%s\', first_datetime)-strftime(\'%s\', last_datetime))) as 'seconds',
+    round(sum((strftime(\'%s\', first_datetime)-strftime(\'%s\', last_datetime)))/3600*power/1000,2)  as 'kWh',
+    first_datetime,last_datetime from devices group by name order by kWh desc limit 100''')
+    
+    names = []
+    kWhs = []
+    for device in devices:
+        names.append(device['name'])
+        kWhs.append(device['kWh'])
+        
+    devices=query_db('''select first_datetime,last_datetime from devices order by first_datetime''')
+        
+    start = devices[0]['first_datetime']
+    stop = devices[len(devices)-1]['last_datetime']
+    return jsonify(names=names,kWh=kWhs,start=start,stop=stop)
+
+
+
 
 @app.route('/<devicename>')
 def device_timeline(devicename):
@@ -191,7 +213,7 @@ def device_timeline(devicename):
             profile_user=profile_user)
 
 
-@app.route('/<deviceid>/change', methods=['POST'])
+@app.route('/change/<devicename>', methods=['GET','POST'])
 def follow_device(devicename):
     """change the device name and add typ."""
     # if not g.user:
@@ -199,11 +221,23 @@ def follow_device(devicename):
     # whom_id = get_user_id(devicename)
     # if whom_id is None:
     #     abort(404)
-    db = get_db()
-    db.execute('UPDATE devices SET name = \'?\' and type = ? WHERE id = ?',(request.form['name'],request.form['devicetype'],deviceid))
-    db.commit()
-    flash('Device name updated to "%s"' % devicename)
-    return redirect(url_for('timeline', devicename=devicename))
+    # flash("UPDATE devices SET name = '?' and type = '?' WHERE name = '?'")
+    
+    while True:
+        try:
+            db = get_db()
+            db.execute("UPDATE `devices` SET `name`='%s', `type`='%s' WHERE `name` = '%s'" % (request.form['name'],request.form['device_type'],devicename))
+            db.commit()
+            break
+        except:
+            flash("UPDATE `devices` SET `name`='%s', `type`='%s' WHERE `name` = '%s'" % (request.form['name'],request.form['device_type'],devicename))
+
+    flash("UPDATE `devices` SET `name`='%s' and `type`='%s' WHERE `name` = '%s'" % (request.form['name'],request.form['device_type'],devicename))
+    
+    flash('Device name updated from "%s" to "%s"' % (devicename,request.form['name']))
+    # flash('Device type updated to "%s"' % request.form['device_type'])
+    # flash('Device name updated ' % 
+    return redirect(url_for('timeline', devicename=request.form['name']))
 
 
 @app.route('/<devicename>/unfollow')
