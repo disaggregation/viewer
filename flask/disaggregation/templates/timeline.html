@@ -27,7 +27,7 @@
           <div class="carousel-item active">
             <img class="first-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="First slide">
             <div class="container">
-              <div class="carousel-caption text-left">
+              <div class="carousel-caption text-left">x
                 <h1>Live Disaggregated Data</h1>
                 <p>The webapp was specifically build to show your disaggregated data energy. The first thing you see below is the disaggregated data grouped per device (power levels) in kWh. The</p>
                 <p><a class="btn btn-lg btn-primary" href="#disaggregated" role="button">Disaggregated data</a> <a class="btn btn-lg btn-primary" href="#live" role="button">Live data</a></p>
@@ -40,7 +40,7 @@
               <div class="carousel-caption">
                 <h1>Confirm and analyse found devices.</h1>
                 <p>Confirm new devices in the list of found devices and monitor their energy consumption.</p>
-                <p><a class="btn btn-lg btn-primary" href="#devices" role="button">Learn more</a></p>
+                <p><a class="btn btn-lg btn-primary" href="#devices" role="button">View found devices</a></p>
               </div>
             </div>
           </div>
@@ -48,9 +48,10 @@
             <img class="third-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Third slide">
             <div class="container">
               <div class="carousel-caption text-right">
-                <h1>Share your knowledge</h1>
-                <p>Add any device types which are not in the list of known devices.</p>
-                <p><a class="btn btn-lg btn-primary" href="https://www.github.com/disaggregation/viewer" role="button">Share</a></p>
+                <h1>Share your data and knownledge</h1>
+                <p>Share your knowlegde and add device types which are not in the list of known devices in the default database on github. You can also share your anonymized data to makethemetersmater.com</p>
+                <p><a class="btn btn-lg btn-primary" href="https://www.github.com/disaggregation/viewer" role="button">Share knowledge</a> 
+                <a class="btn btn-lg btn-primary" href="#" onclick="alert('data sharing is not yet implemented');" role="button">Share anonymized data</a></p>
               </div>
             </div>
           </div>
@@ -77,10 +78,10 @@
   var mydoughnutChart = new Chart(ctxD, {
       type: 'doughnut',
       data: {
-          labels: [{% for device in devices %}"{{ device.name }}",{% endfor %}"extra"],
+          labels: ["unknown"{% for device in devices %},"{{ device.name }}"{% endfor %}],
           datasets: [
               {
-                  data: [{% for device in devices %}{{ device.kWh }},{% endfor %}0]
+                  data: [0{% for device in devices %},{{ device.kWh }}{% endfor %}]
                   ,backgroundColor: ["#ff0000","#ff4000","#ff8000","#ffbf00","#ffff00","#bfff00","#80ff00","#40ff00","#00ff00","#00ff40","#00ff80","#00ffbf","#00ffff","#00bfff","#0080ff","#0040ff","#0000ff","#4000ff","#8000ff","#bf00ff","#ff00ff","#ff00bf","#ff0080","#ff0040"]
 				   ,hoverBackgroundColor: ["#ff0000","#ff4000","#ff8000","#ffbf00","#ffff00","#bfff00","#80ff00","#40ff00","#00ff00","#00ff40","#00ff80","#00ffbf","#00ffff","#00bfff","#0080ff","#0040ff","#0000ff","#4000ff","#8000ff","#bf00ff","#ff00ff","#ff00bf","#ff0080","#ff0040"]
               }
@@ -126,18 +127,18 @@
        var myChart = new Chart(ctx, {
          type: 'line',
          data: {
-           labels: [{% for load in loads %}
-				 "{{ load.date }}",
+           labels: [""{% for load in loads %}
+				 ,"{{ load.date }}"
   {% else %}
-    1,2,3,4,5,4,3,2,1,
-  {% endfor %}"now?"],
+    ,1,2,3,4,5,4,3,2,1
+  {% endfor %}],
            datasets: [{
                label: "Usage",
-               data: [{% for load in loads %}
-  				 {{ load.demand_power }},
+               data: [0{% for load in loads %}
+				   ,{{ load.demand_power }}
     {% else %}
-      1,2,3,4,5,4,3,2,1,
-    {% endfor %}0],
+      ,1,2,3,4,5,4,3,2,1
+    {% endfor %}],
                lineTension: 0,
                steppedLine: 'before',
                backgroundColor: 'transparent',
@@ -146,11 +147,11 @@
     pointBackgroundColor: '#007bff',name:"title"
              },{
 	             label: "Production",
-	             data: [{% for load in loads %}
-					 {{ load.demand_power }},
+	             data: [0{% for load in loads %}
+					 ,{{ load.demand_power }}
 	  {% else %}
-	    1,2,3,4,5,4,3,2,1,
-	  {% endfor %}0],
+	    ,1,2,3,4,5,4,3,2,1
+	  {% endfor %}],
 	             lineTension: 0,
 	             steppedLine: 'before',
 	             backgroundColor: 'transparent',
@@ -252,7 +253,7 @@
 
   
   <h2>Found devices list</h2>
-  The list below shows all the devices that where found by the disaggregation code. The are grouped per power level, meanse each device with 1000W is grouped and named '1000_'. You can rename the device. If you think the device is correctly disaggregated, you can select a type and confirm it's presense.<br>
+  The list below shows all the devices that where found by the disaggregation code. The are grouped per power level, meanind each device with an average pwer of 1000W is grouped and named '1000_'. You can rename the device. If you think the device is correctly disaggregated, you can select a type and confirm it's presense. If you see something incorrect, you mark it with the red cross.<br> 
   <div class="table-responsive">
               <table class="table table-striped table-sm">
                 <thead>
@@ -288,8 +289,9 @@
     </td>
     
     <td>
-		<img src="./static/images/cancel.jpeg" width="20" height="20" alt="Cancel">
-		<img src="../static/images/confirm.jpeg" width="20" height="20" alt="Confirm">
+		<a href="/cancel/{{ device.name }}"><img src="./static/images/cancel.jpeg" width="20" height="20" alt="Cancel"></a>
+		<a href="/confirm/{{ device.name }}"><img src="../static/images/confirm.jpeg" width="20" height="20" alt="Confirm"></a>
+		<!-- <a href="/monitor/{{ device.name }}"><img src="../static/images/monitoring.png" width="20" height="20" alt="Monitor"></a> -->
 	</td>
     <td>{{ device.power }} W</td>
     <td>{{ device.kWh }} kWh</td>

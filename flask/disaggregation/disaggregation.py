@@ -90,6 +90,12 @@ def get_user_id(username):
                   [username], one=True)
     return rv[0] if rv else None
 
+def get_device_id(devicename):
+    """Convenience method to look up the id for a username."""
+    rv = query_db('select device_id from devices where name = ?',
+                  [devicename], one=True)
+    return rv[0] if rv else None
+
 
 def format_datetime(timestamp):
     """Format a timestamp for display."""
@@ -137,7 +143,7 @@ def public_timeline():
         devices=query_db('''select *,count(*) as 'num',avg(power),
 sum((strftime(\'%s\', first_datetime)-strftime(\'%s\', last_datetime))) as 'seconds',
 round(sum((strftime(\'%s\', first_datetime)-strftime(\'%s\', last_datetime)))/3600*power/1000,2)  as 'kWh',
-first_datetime,last_datetime from devices group by name order by last_datetime limit ?''', [PER_PAGE]),
+min(first_datetime) as 'first_datetime',max(first_datetime) as 'last_start', max(last_datetime) as 'last_datetime' FROM devices GROUP BY name ORDER BY last_datetime limit ?''', [PER_PAGE]),
         device_types=query_db('''select * from device_types limit ?''', [PER_PAGE]),
         loads=reversed(query_db('''select * from loads order by date desc limit ?''', [1000])))
 
@@ -231,8 +237,6 @@ def follow_device(devicename):
             break
         except:
             flash("UPDATE `devices` SET `name`='%s', `type`='%s' WHERE `name` = '%s'" % (request.form['name'],request.form['device_type'],devicename))
-
-    flash("UPDATE `devices` SET `name`='%s' and `type`='%s' WHERE `name` = '%s'" % (request.form['name'],request.form['device_type'],devicename))
     
     flash('Device name updated from "%s" to "%s"' % (devicename,request.form['name']))
     # flash('Device type updated to "%s"' % request.form['device_type'])
@@ -240,20 +244,38 @@ def follow_device(devicename):
     return redirect(url_for('timeline', devicename=request.form['name']))
 
 
-@app.route('/<devicename>/unfollow')
-def unfollow_device(devicename):
+@app.route('/confirm/<devicename>')
+def confirm(devicename):
     """Removes the current user as follower of the given user."""
     if not g.user:
-        abort(401)
-    whom_id = get_user_id(devicename)
-    if whom_id is None:
-        abort(404)
+        whom_id = 0 #get_user_id(devicename)
     db = get_db()
-    db.execute('delete from follower where who_id=? and whom_id=?',
-              [session['user_id'], whom_id])
+    db.execute("UPDATE `devices` SET `confirm_datetime`='%s' WHERE `name` = '%s'" % (time.strftime("%Y-%m-%d %H:%M:%S"),devicename))
     db.commit()
-    flash('You are no longer following "%s"' % devicename)
-    return redirect(url_for('device_timeline', devicename=devicename))
+    flash('You confirmed "%s".' % devicename)
+    return redirect(url_for('timeline'))
+
+@app.route('/cancel/<devicename>')
+def cancel(devicename):
+    """Removes the current user as follower of the given user."""
+    if not g.user:
+        whom_id = 0 #get_user_id(devicename)
+    db = get_db()
+    db.execute("UPDATE `devices` SET `confirm_datetime`='NULL' WHERE `name` = '%s'" % devicename)
+    db.commit()
+    flash('You unconfirmed "%s".' % devicename)
+    return redirect(url_for('timeline'))
+
+@app.route('/monitor/<devicename>')
+def monitor(devicename):
+    """Removes the current user as follower of the given user."""
+    if not g.user:
+        whom_id = 0 #get_user_id(devicename)
+    db = get_db()
+    db.execute("INSERT INTO `device_monitoring` (`user_id`,`device_id`,`trigger`) VALUES ('%s','%s,'test');" % (whom_id,get_device_id(devicename)))
+    db.commit()
+    flash('You are monitoring "%s".' % devicename)
+    return redirect(url_for('timeline'))
 
 
 @app.route('/add_message', methods=['POST'])
@@ -269,20 +291,6 @@ def add_message():
         db.commit()
         flash('Your message was recorded')
     return redirect(url_for('timeline'))
-
-@app.route('/confirm_device', methods=['POST'])
-def confirm_device():
-    """Confirm a new device for the user."""
-    if 'user_id' not in session:
-        abort(401)
-    if request.form['text']:
-        db = get_db()
-        db.execute('''insert into devices (author_id, name, confirm_datetime)
-          values (?, ?, ?)''', (session['user_id'], request.form['text'],
-                                int(time.time())))
-        db.commit()
-        flash('Your devcies was saved.')
-    return redirect(url_for('devices'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
