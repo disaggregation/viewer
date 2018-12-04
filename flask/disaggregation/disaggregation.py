@@ -145,8 +145,8 @@ sum((strftime(\'%s\', first_datetime)-strftime(\'%s\', last_datetime))) as 'seco
 round(sum((strftime(\'%s\', first_datetime)-strftime(\'%s\', last_datetime)))/3600*power/1000,2)  as 'kWh',
 min(first_datetime) as 'first_datetime',max(first_datetime) as 'last_start', max(last_datetime) as 'last_datetime' FROM devices GROUP BY name ORDER BY last_datetime limit ?''', [PER_PAGE]),
         device_types=query_db('''select * from device_types limit ?''', [PER_PAGE]),
-        loads=reversed(query_db('''select * from loads order by date desc limit ?''', [1000])))
-
+        loads=reversed(query_db('''select * from loads order by date desc limit ?''', [1000]))
+        )
 @app.route('/devices')
 def show_devices():
     """Displays the devices of all users."""
@@ -170,6 +170,7 @@ def load_live_data():
         except:
             loads.append(load['demand_power'])
             production.append(load['supply_power'])
+
     power = loads[0]
     # app.logger.debug(loadsonly.keys())
     # return power
