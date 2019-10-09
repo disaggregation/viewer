@@ -181,8 +181,8 @@ def load_live_data():
         # if no three fase powe is available, show no
         
     power   = loads[0]
-    dP = "10W"
-    # dP      =   str(round(int(loads[0]) - int(loads[1]),0))
+    # dP = "10W"
+    dP      =   str(round(float(loads[0]) - float(loads[1])+float(production[1]) - float(production[0]),0))
     # app.logger.debug(loadsonly.keys())
     # return power
     return jsonify(result=power,powerchange=dP,timestamps=list(reversed(timestamps)),data=list(reversed(loads)),production=list(reversed(production)))
