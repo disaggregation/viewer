@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}
+  {% if request.endpoint == 'public_timeline' %}
+    Found devices
+  {% elif request.endpoint == 'device_timeline' %}
+    {{ profile_user.username }}'s confirmed devices
+  {% else %}
+    My confirmed devices
+  {% endif %}
+{% endblock %}
+{% block body %}
+
+<h1>Live data</h1>
+<p>
+	Usage: <span id="usage">?</span> W 
+<br>Production <span id="production">?</span> W
+<br>Power Change <span id="powerchange">?</span> W
+</p>
+<!-- <a href=# id="calculate">load last data</a> -->
+	<script type="text/javascript">
+	  $(function() {
+	    var submit_form = function(e) {
+	      $.getJSON($SCRIPT_ROOT + '/load_live_data', {request:'power'}, function(data) {
+  	        $('#usage').text(data.result);
+			$('#production').text(data.result);
+			$('#powerchange').text(data.powerchange);
+	      });
+	      return false;
+	    };
+		setInterval(submit_form, 1000);
+	    // $('a#calculate').bind('click', submit_form);
+
+	  });
+	</script>
+{% endblock %}

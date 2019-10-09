@@ -1,12 +1,9 @@
 
-                        / disaggregation /
-
-           because writing todo lists is not fun
-
+                        / Disaggregation Data Viewer/
 
     ~ What is disaggregation?
 
-      A SQLite and Flask powered twitter clone
+      A SQLite and Flask (python web based) disaggregation data displayer 
 
     ~ How do I use it?
 
