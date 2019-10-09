@@ -165,16 +165,27 @@ def load_live_data():
     for load in loadsonly:
         timestamps.append(load['date'])
         try:
-            loads.append(load['demand_power_L1']+load['demand_power_L2']+load['demand_power_L3'])
-            production.append(load['supply_power_L1']+load['supply_power_L2']+load['supply_power_L3'])
+            if load['demand_power_L1'] == "":
+                # loads = []
+                # production = []
+                loads.append(load['demand_power'])
+                production.append(load['supply_power'])
+            else:
+                loads.append(load['demand_power_L1']+load['demand_power_L2']+load['demand_power_L3'])
+                production.append(load['supply_power_L1']+load['supply_power_L2']+load['supply_power_L3'])
+            
         except:
             loads.append(load['demand_power'])
             production.append(load['supply_power'])
-
-    power = loads[0]
+        
+        # if no three fase powe is available, show no
+        
+    power   = loads[0]
+    dP = "10W"
+    # dP      =   str(round(int(loads[0]) - int(loads[1]),0))
     # app.logger.debug(loadsonly.keys())
     # return power
-    return jsonify(result=power,timestamps=list(reversed(timestamps)),data=list(reversed(loads)),production=list(reversed(production)))
+    return jsonify(result=power,powerchange=dP,timestamps=list(reversed(timestamps)),data=list(reversed(loads)),production=list(reversed(production)))
 
 @app.route('/load_disaggregated_data')
 def load_disaggregated_data():
